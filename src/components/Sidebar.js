@@ -1,6 +1,8 @@
 import React from "react";
 
 const Sidebar = (props) => {
+    // setChatWindow choices: 'chat', 'create-chat', 'dm'
+    const {setChatWindow} = props;
     return (
         <section id="sidebar">
             <div id="side-header">
