@@ -1,6 +1,63 @@
 import React from "react";
+import { useState } from "react/cjs/react.development";
 
 const Login = (props) => {
+    const {setPage} = props;
+    const [error, setError] = useState(false);
+    const loginToSlack = (email, password) => {
+        const payload = {
+            email: email, 
+            password: password
+        }
+        const options = {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        }
+
+        fetch(`${process.env.REACT_APP_SLACK_ENDPOINT}/auth/sign_in`, options)
+            .then(response => {
+                console.log(response)
+                
+                if(response.status == 200) {
+                    // console.log(response.headers.get('uid'));
+                    localStorage.setItem('uid', response.headers.get('uid'));
+                    // console.log(response.headers.get('expiry'));
+                    localStorage.setItem('expiry', response.headers.get('expiry'));
+                    // console.log(response.headers.get('access-token'));
+                    localStorage.setItem('access-token', response.headers.get('access-token'));
+                    // console.log(response.headers.get('client'));
+                    localStorage.setItem('client', response.headers.get('client'));
+                }
+                return response.json()
+            })
+            .then(data => {
+                console.log(data)
+                if(data.errors) {
+                    setError(<span className="danger">{data.errors[0]}</span>);
+                } else {
+                    setError('')
+                    localStorage.setItem('user', JSON.stringify(data.data));
+                    setPage('slack');
+                }
+            })
+    }
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        const email = e.target.elements.email.value;
+        const password = e.target.elements.password.value;
+
+        loginToSlack(email, password)
+    }
+
+    const goCreateAccount = (e) => {
+        e.preventDefault();
+        setPage('signup')
+    }
 
     return (
         <main>
@@ -8,13 +65,15 @@ const Login = (props) => {
             <div className="form">
                 <div className="logo"><img src="logo.png" alt="" /> slackvion</div>
                 <h1>Login to your account</h1>
+                {error}
                 <div className="second">Please enter your work email and password.</div>
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Password" />
-                <button type="submit">Login</button>
-
+                <form onSubmit={onSubmit}>
+                    <input type="email" name="email" placeholder="Email" />
+                    <input type="password" name="password" placeholder="Password" />
+                    <button type="submit">Login</button>
+                </form>
                 <div className="second">No account yet?<br />
-                    <a href="#">Click here to create one</a>
+                    <a href="#" onClick={goCreateAccount}>Click here to create one</a>
                 </div>
             </div>
         </div>

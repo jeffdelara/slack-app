@@ -38,6 +38,10 @@ h1, h2, h3, h4, h5 {
     font-family: var(--heading-font);
 }
 
+section {
+    animation: fadein .3s;
+}
+
 main {
     height: 100vh;
     width: 100vw;
@@ -328,6 +332,7 @@ main {
     width: 500px;
     padding: 1rem;
     padding-bottom: 8rem;
+    animation: fadein .3s;
 }
 
 .form .logo {
@@ -399,3 +404,15 @@ a:hover {
     color: var(--links-hover);
     text-decoration: underline;
 }
+
+.danger {
+    color: red;
+}
+
+
+/* Animation */
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+/* /Animation */
