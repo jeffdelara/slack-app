@@ -1,9 +1,11 @@
 import React from "react";
 import { useState } from "react/cjs/react.development";
+import FormNotif from "./FormNotif";
 
 const Login = (props) => {
     const {setPage} = props;
     const [error, setError] = useState(false);
+
     const loginToSlack = (email, password) => {
         const payload = {
             email: email, 
@@ -37,9 +39,9 @@ const Login = (props) => {
             .then(data => {
                 console.log(data)
                 if(data.errors) {
-                    setError(<span className="danger">{data.errors[0]}</span>);
+                    setError(data.errors[0]);
                 } else {
-                    setError('')
+                    setError(false)
                     localStorage.setItem('user', JSON.stringify(data.data));
                     setPage('slack');
                 }
@@ -65,7 +67,7 @@ const Login = (props) => {
             <div className="form">
                 <div className="logo"><img src="logo.png" alt="" /> slackvion</div>
                 <h1>Login to your account</h1>
-                {error}
+                {error && <FormNotif messageType="danger" message={error} />}
                 <div className="second">Please enter your work email and password.</div>
                 <form onSubmit={onSubmit}>
                     <input type="email" name="email" placeholder="Email" />

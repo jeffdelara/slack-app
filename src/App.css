@@ -409,6 +409,10 @@ a:hover {
     color: red;
 }
 
+.success {
+    color: var(--success);
+}
+
 
 /* Animation */
 @keyframes fadein {
