@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
-import { useState } from "react/cjs/react.development";
+import React, { useEffect, useState } from "react";
+import ChannelItems from "./ChannelItems";
 
 const Sidebar = (props) => {
     // setChatWindow choices: 'chat', 'create-chat', 'dm'
-    const {setChatWindow, setPage} = props;
-    // contains array of channels that i joined
-    const [chanList, setChanList] = useState([]);
-    // contains array of users who dm with me
-    const [dmList, setdmList] = useState([]);
+    // setPage choices: 'login', 'slack'
+    const {setChatWindow, setPage, chanList, setChanList, dmList, setdmList} = props;
+
+    const [isChanListLoaded, setIsChanListLoaded] = useState(false);
+    const [isdmListLoaded, setIsdmListLoaded] = useState(false);
+    
 
     const getUserChannels = ({accessToken, client, expiry, uid}) => {
         const options = {
@@ -30,7 +31,9 @@ const Sidebar = (props) => {
                     console.log(data)
                 } else {
                     // no errors
-                    console.log(data)
+                    const channels = data.data;
+                    setChanList([...channels]);
+                    setIsChanListLoaded(true);
                 }
             })
     }
@@ -47,7 +50,8 @@ const Sidebar = (props) => {
             }
         }
 
-        fetch(`${process.env.REACT_APP_SLACK_ENDPOINT}/messages?receiver_id=${user.id}&receiver_class=User`, options)
+        const url = `${process.env.REACT_APP_SLACK_ENDPOINT}/messages?receiver_id=${user.id}&receiver_class=User`;
+        fetch(url, options)
             .then(response => {
                 return response.json()
             })
@@ -57,6 +61,7 @@ const Sidebar = (props) => {
             })
     }
 
+    // populate the sidebar
     useEffect(() => {
         const accessToken = localStorage.getItem('access-token');
         const client = localStorage.getItem('client');
@@ -66,13 +71,20 @@ const Sidebar = (props) => {
 
         // get users channels only if all headers exists
         if(accessToken && client && expiry && uid) {
-            getUserChannels({accessToken, client, expiry, uid});
-            getUserMessages(user, {accessToken, client, expiry, uid});
+            if(!isChanListLoaded) getUserChannels({accessToken, client, expiry, uid});
+            if(!isdmListLoaded) getUserMessages(user, {accessToken, client, expiry, uid});
         } else {
             // else go to login page
             setPage('login'); 
         }
     }, [chanList, dmList]);
+
+    // handler for creating a channel
+    const createChannel = (e) => {
+        e.preventDefault();
+        // opens the create-chat panel
+        setChatWindow('create-chat');
+    }
 
     return (
         <section id="sidebar">
@@ -87,10 +99,9 @@ const Sidebar = (props) => {
                 <div id="side-channel-list">
                     <a href="#">Channels</a>
                     <ul>
-                        <li><i className='bx bx-hash'></i> announcement</li>
-                        <li><i className='bx bx-hash'></i> coding</li>
-                        <li><i className='bx bx-hash'></i> mentoring</li>
-                        <li><a href="#"><i className='bx bxs-plus-square' ></i> Create channels</a></li>
+                        <ChannelItems chanList={chanList} setChatWindow={setChatWindow} />
+
+                        <li><a href="#" onClick={createChannel}><i className='bx bxs-plus-square' ></i> Create channels</a></li>
                     </ul>
                 </div>
 
