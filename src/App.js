@@ -1,12 +1,22 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Slack from './components/Slack';
 
 function App() {
   const [page, setPage] = useState('login');  
-  // console.log(process.env.REACT_APP_SLACK_ENDPOINT)
+
+  // check if already logged in
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+
+    if(user) {
+      setPage('slack'); 
+    } else {
+      setPage('login');
+    }
+  });
 
   if(page === 'login') {
     return <Login setPage={setPage} />
