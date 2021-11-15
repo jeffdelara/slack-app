@@ -4,6 +4,7 @@ import FormNotif from "./FormNotif";
 const Login = (props) => {
     const {setPage} = props;
     const [error, setError] = useState(false);
+    const [messageType, setMessageType] = useState('danger');
 
     const loginToSlack = (email, password) => {
         const payload = {
@@ -57,7 +58,7 @@ const Login = (props) => {
 
     const goCreateAccount = (e) => {
         e.preventDefault();
-        setPage('signup')
+        setPage('signup');
     }
 
     return (

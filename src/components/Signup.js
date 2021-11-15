@@ -3,7 +3,8 @@ import FormNotif from "./FormNotif";
 
 const Signup = (props) => {
     const {setPage} = props;
-    const [error, setError] = useState(false);
+    const [notifMessage, setNotifMessage] = useState('');
+    const [notifType, setNotifType] = useState(false);
 
     // go to login page
     const goLogin = (e) => {
@@ -41,12 +42,19 @@ const Signup = (props) => {
                 return response.json()
             })
             .then(data => {
-                if(data.errors) {
+                if(data.status === 'error') {
                     // what to do if error
-                } else {
-                    // no errors
+                    const fullMessages = data.errors.full_messages.map(error => {
+                        return <li>{error}</li>
+                    });
+                    setNotifType('danger');
+                    setNotifMessage(fullMessages);
+                } 
+                
+                if(data.status === 'success') {
+                    setNotifType('success');
+                    setNotifMessage('Success! You may now login.');
                 }
-                console.log(data)
             })
     }
 
@@ -56,7 +64,7 @@ const Signup = (props) => {
                 <div className="form">
                     <div className="logo"><img src="logo.png" alt="" /> slackvion</div>
                     <h1>Create your account</h1>
-                    {error && <FormNotif messageType="danger" message={error} />}
+                    {notifType && <FormNotif messageType={notifType} message={notifMessage} />}
                     <div className="second">We suggest using the email address you use at work.</div>
                     <form onSubmit={onSubmit}>
                         <input type="email" name="email" placeholder="Email" />

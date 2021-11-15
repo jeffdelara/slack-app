@@ -7,6 +7,7 @@ const ChannelItems = (props) => {
         e.preventDefault();
         const channelId = +e.target.getAttribute("data-id");
         setChatWindow('chat');
+        console.log(channelId);
     }
 
     const chans = chanList.map(chan => {

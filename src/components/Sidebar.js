@@ -71,6 +71,7 @@ const Sidebar = (props) => {
 
         // get users channels only if all headers exists
         if(accessToken && client && expiry && uid) {
+            // get user channels only when channel list is not yet loaded
             if(!isChanListLoaded) getUserChannels({accessToken, client, expiry, uid});
             if(!isdmListLoaded) getUserMessages(user, {accessToken, client, expiry, uid});
         } else {

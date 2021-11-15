@@ -13,8 +13,6 @@ function App() {
 
     if(user) {
       setPage('slack'); 
-    } else {
-      setPage('login');
     }
   });
 
