@@ -1,6 +1,14 @@
 import React from "react";
 
 const ChannelChat = (props) => {
+    const {channelId, channelName} = props; 
+
+    // channelId is the id
+    console.log(channelId);
+    // channelId is the id
+    console.log(channelName);
+
+
     return (
         <section id="channel-chat">
             <div id="channel-header">

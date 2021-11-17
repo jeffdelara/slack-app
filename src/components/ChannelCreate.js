@@ -51,7 +51,7 @@ const ChannelCreate = (props) => {
                 return response.json()
             })
             .then(data => {
-
+                console.log(data);
                 if(data.errors) {
                     console.log(data);
                 } else {

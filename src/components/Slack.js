@@ -9,6 +9,8 @@ const Slack = (props) => {
     const {setPage} = props;
     const [isThreadOpen, setIsThreadOpen] = useState(true);
     const [chatWindow, setChatWindow] = useState('chat'); // chat, create-chat, dm
+    const [channelId, setChannelId] = useState(0);
+    const [channelName, setChannelName] = useState('');
 
     // sidebar states
     // contains array of channels that i joined
@@ -19,7 +21,7 @@ const Slack = (props) => {
     let chat = <ChannelChat setIsThreadOpen={setIsThreadOpen} />
 
     if(chatWindow === 'chat') {
-        chat = <ChannelChat setIsThreadOpen={setIsThreadOpen} />
+        chat = <ChannelChat setIsThreadOpen={setIsThreadOpen} channelId={channelId} channelName={channelName} />
     }
 
     if(chatWindow === 'create-chat') {
@@ -40,7 +42,9 @@ const Slack = (props) => {
                      chanList={chanList} 
                      setChanList={setChanList} 
                      dmList={dmList}
-                     setdmList={setdmList} />
+                     setdmList={setdmList} 
+                     setChannelId={setChannelId} 
+                     setChannelName={setChannelName} />
             {chat}
             {thread}
         </main>

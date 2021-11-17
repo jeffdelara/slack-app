@@ -4,7 +4,7 @@ import ChannelItems from "./ChannelItems";
 const Sidebar = (props) => {
     // setChatWindow choices: 'chat', 'create-chat', 'dm'
     // setPage choices: 'login', 'slack'
-    const {setChatWindow, setPage, chanList, setChanList, dmList, setdmList} = props;
+    const {setChatWindow, setPage, chanList, setChanList, dmList, setdmList, setChannelId, setChannelName} = props;
 
     const [isChanListLoaded, setIsChanListLoaded] = useState(false);
     const [isdmListLoaded, setIsdmListLoaded] = useState(false);
@@ -100,7 +100,11 @@ const Sidebar = (props) => {
                 <div id="side-channel-list">
                     <a href="#">Channels</a>
                     <ul>
-                        <ChannelItems chanList={chanList} setChatWindow={setChatWindow} />
+                        <ChannelItems 
+                            chanList={chanList} 
+                            setChatWindow={setChatWindow} 
+                            setChannelId={setChannelId}
+                            setChannelName={setChannelName} />
 
                         <li><a href="#" onClick={createChannel}><i className='bx bxs-plus-square' ></i> Create channels</a></li>
                     </ul>
