@@ -1,6 +1,11 @@
 import React from "react";
 
 const DirectMessage = (props) => {
+    // channelId is also the receiver_id to be used for fetching API
+    const {channelId} = props;
+
+    console.log(channelId);
+    
     return (
         <section id="channel-chat">
             <div id="channel-header">

@@ -25,6 +25,7 @@ const Login = (props) => {
                 console.log(response)
                 
                 if(response.status == 200) {
+                    localStorage.clear();
                     // console.log(response.headers.get('uid'));
                     localStorage.setItem('uid', response.headers.get('uid'));
                     // console.log(response.headers.get('expiry'));
