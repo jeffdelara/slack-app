@@ -30,7 +30,7 @@ const Slack = (props) => {
 
     if(chatWindow === 'dm') {
         // send the user id maybe?
-        chat = <DirectMessage />
+        chat = <DirectMessage channelId={channelId} />
     }
 
     const thread = isThreadOpen && <Thread setIsThreadOpen={setIsThreadOpen} />

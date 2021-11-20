@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ChannelItems from "./ChannelItems";
+import SideDirectMessages from "./SideDirectMessages";
 
 const Sidebar = (props) => {
     // setChatWindow choices: 'chat', 'create-chat', 'dm'
     // setPage choices: 'login', 'slack'
     const {setChatWindow, setPage, chanList, setChanList, dmList, setdmList, setChannelId, setChannelName} = props;
 
-    const [isChanListLoaded, setIsChanListLoaded] = useState(false);
-    const [isdmListLoaded, setIsdmListLoaded] = useState(false);
-    
+    const [isLogout, setIsLogout] = useState(false);
+    const [messages, setMessages] = useState([]);
 
     const getUserChannels = ({accessToken, client, expiry, uid}) => {
         const options = {
@@ -28,12 +28,12 @@ const Sidebar = (props) => {
             })
             .then(data => {
                 if(data.errors) {
-                    console.log(data)
+                    // console.log(data)
                 } else {
                     // no errors
                     const channels = data.data;
                     setChanList([...channels]);
-                    setIsChanListLoaded(true);
+                    console.log(dmList);
                 }
             })
     }
@@ -53,11 +53,13 @@ const Sidebar = (props) => {
         const url = `${process.env.REACT_APP_SLACK_ENDPOINT}/messages?receiver_id=${user.id}&receiver_class=User`;
         fetch(url, options)
             .then(response => {
-                return response.json()
+                return response.json();
             })
             .then(data => {
+                console.log(data);
                 const dms = data.data;
-                console.log(dms);
+
+                setdmList([...dms]);
             })
     }
 
@@ -72,13 +74,23 @@ const Sidebar = (props) => {
         // get users channels only if all headers exists
         if(accessToken && client && expiry && uid) {
             // get user channels only when channel list is not yet loaded
-            if(!isChanListLoaded) getUserChannels({accessToken, client, expiry, uid});
-            if(!isdmListLoaded) getUserMessages(user, {accessToken, client, expiry, uid});
+            getUserChannels({accessToken, client, expiry, uid});
+            getUserMessages(user, {accessToken, client, expiry, uid});
         } else {
             // else go to login page
             setPage('login'); 
         }
-    }, [chanList, dmList]);
+    }, []);
+
+    // For logout
+    useEffect(() => {
+        if(isLogout) {
+            // delete localstorage
+            localStorage.clear();
+            // go to login page
+            setPage('login');
+        }
+    }, [isLogout])
 
     // handler for creating a channel
     const createChannel = (e) => {
@@ -112,12 +124,14 @@ const Sidebar = (props) => {
 
                 <div id="side-direct-messages" className="mt-2">
                     <a href="#">Direct messages</a>
-                    <ul>
-                        <li className="dm-item"><img src="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" alt="" /> Slackbot</li>
-                        <li className="dm-item"><img src="https://ca.slack-edge.com/T010DU0GZE0-U02C42FABUK-8daed97695af-512" alt="" /> Jeffrey de Lara</li>
-                        <li className="dm-item"><img src="https://ca.slack-edge.com/T010DU0GZE0-U01CNLJ3J0P-46af7649e68b-512" alt="" /> Maurus Vitor</li>
-                    </ul>
+                    <SideDirectMessages 
+                        dmList={dmList} 
+                        setdmList={setdmList} 
+                        setChatWindow={setChatWindow}
+                        setChannelId={setChannelId} />
                 </div>
+
+                <div className="mt-2"><a href="#" onClick={() => setIsLogout(true)}><i class='bx bx-log-out'></i> Logout</a></div>
             </div>
         </section>
     )
