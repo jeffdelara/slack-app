@@ -1,7 +1,7 @@
 import React from "react";
 
 const SideDirectMessages = (props) => {
-    const {dmList, setdmList, setChatWindow, setChannelId} = props; 
+    const {dmList, setdmList, setChatWindow, setChannelId, setChannelName} = props; 
     const dmObjects = {}
     
     // cleanup
@@ -17,7 +17,8 @@ const SideDirectMessages = (props) => {
                 pic="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" 
                 name={element.sender.uid}
                 setChatWindow={setChatWindow}
-                setChannelId={setChannelId} />
+                setChannelId={setChannelId} 
+                setChannelName={setChannelName} />
     })
 
     return (
@@ -28,11 +29,12 @@ const SideDirectMessages = (props) => {
 }
 
 const SideDMPerson = (props) => {
-    const {pic, name, receiverId, setChatWindow, setChannelId} = props;
+    const {pic, name, receiverId, setChatWindow, setChannelId, setChannelName} = props;
 
     const changeChatWindow = (e) => {
         e.preventDefault();
         setChannelId(receiverId);
+        setChannelName(name);
         setChatWindow('dm');
     }
 

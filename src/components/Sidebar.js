@@ -128,7 +128,8 @@ const Sidebar = (props) => {
                         dmList={dmList} 
                         setdmList={setdmList} 
                         setChatWindow={setChatWindow}
-                        setChannelId={setChannelId} />
+                        setChannelId={setChannelId} 
+                        setChannelName={setChannelName} />
                 </div>
 
                 <div className="mt-2"><a href="#" onClick={() => setIsLogout(true)}><i class='bx bx-log-out'></i> Logout</a></div>
