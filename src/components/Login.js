@@ -26,13 +26,9 @@ const Login = (props) => {
                 
                 if(response.status == 200) {
                     localStorage.clear();
-                    // console.log(response.headers.get('uid'));
                     localStorage.setItem('uid', response.headers.get('uid'));
-                    // console.log(response.headers.get('expiry'));
                     localStorage.setItem('expiry', response.headers.get('expiry'));
-                    // console.log(response.headers.get('access-token'));
                     localStorage.setItem('access-token', response.headers.get('access-token'));
-                    // console.log(response.headers.get('client'));
                     localStorage.setItem('client', response.headers.get('client'));
                 }
                 return response.json()

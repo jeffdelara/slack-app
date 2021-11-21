@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ChannelItems from "./ChannelItems";
 import SideDirectMessages from "./SideDirectMessages";
+import { getHeaders } from "./Utils";
 
 const Sidebar = (props) => {
     // setChatWindow choices: 'chat', 'create-chat', 'dm'
@@ -8,7 +9,6 @@ const Sidebar = (props) => {
     const {setChatWindow, setPage, chanList, setChanList, dmList, setdmList, setChannelId, setChannelName} = props;
 
     const [isLogout, setIsLogout] = useState(false);
-    const [messages, setMessages] = useState([]);
 
     const getUserChannels = ({accessToken, client, expiry, uid}) => {
         const options = {
@@ -65,11 +65,7 @@ const Sidebar = (props) => {
 
     // populate the sidebar
     useEffect(() => {
-        const accessToken = localStorage.getItem('access-token');
-        const client = localStorage.getItem('client');
-        const expiry = localStorage.getItem('expiry');
-        const uid = localStorage.getItem('uid');
-        const user = JSON.parse(localStorage.getItem('user'));
+        const { accessToken, client, expiry, uid, user } = getHeaders();
 
         // get users channels only if all headers exists
         if(accessToken && client && expiry && uid) {
