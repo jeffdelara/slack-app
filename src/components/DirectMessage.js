@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import { getHeaders } from "./Utils";
 
 const DirectMessage = (props) => {
     // channelId is also the receiver_id to be used for fetching API
@@ -10,13 +11,7 @@ const DirectMessage = (props) => {
 
     console.log(receiverName);
 
-    const headers = {
-         accessToken : localStorage.getItem('access-token'),
-         client : localStorage.getItem('client'),
-         expiry : localStorage.getItem('expiry'),
-         uid : localStorage.getItem('uid'),
-         user : JSON.parse(localStorage.getItem('user'))
-    }
+    const headers = getHeaders();
 
     useEffect(() => {
         console.log(receiverId);

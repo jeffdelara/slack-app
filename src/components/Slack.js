@@ -38,13 +38,13 @@ const Slack = (props) => {
     return (
         <main>
             <Sidebar setChatWindow={setChatWindow} 
-                     setPage={setPage} 
-                     chanList={chanList} 
-                     setChanList={setChanList} 
-                     dmList={dmList}
-                     setdmList={setdmList} 
-                     setChannelId={setChannelId} 
-                     setChannelName={setChannelName} />
+                setPage={setPage} 
+                chanList={chanList} 
+                setChanList={setChanList} 
+                dmList={dmList}
+                setdmList={setdmList} 
+                setChannelId={setChannelId} 
+                setChannelName={setChannelName} />
             {chat}
             {thread}
         </main>

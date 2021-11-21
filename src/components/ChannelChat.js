@@ -1,12 +1,22 @@
 import React from "react";
+import { getHeaders } from "./Utils";
 
 const ChannelChat = (props) => {
     const {channelId, channelName} = props; 
 
     // channelId is the id
     console.log(channelId);
-    // channelId is the id
+    // channelName is the name of the channel
     console.log(channelName);
+
+    // HINT:
+    // Retrieve all messages using Slack API
+    // Referece: https://slack-avion.netlify.app/
+    // HTTP Method: Get
+    // URL: {process.env.REACT_APP_SLACK_ENDPOINT}/messages?receiver_id=${receiverId}&receiver_class=Channel
+    // Where receiver_id is the channelId declared above
+    // use getHeaders() to get the headers needed for the fetch request
+    // Display the data on the channel window
 
 
     return (
