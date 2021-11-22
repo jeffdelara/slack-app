@@ -6,17 +6,12 @@ const DirectMessage = (props) => {
     const {channelId, channelName} = props;
     const receiverId = channelId;
     const receiverName = channelName;
-
     const [messages, setMessages] = useState({});
-
-    console.log(receiverName);
-
+    const [chatInput, setChatInput] = useState('');
     const headers = getHeaders();
 
     useEffect(() => {
-        console.log(receiverId);
         getUserMessages(receiverId, headers);
-
     }, [receiverId]);
 
     const getUserMessages = (receiverId, headers) => {
@@ -37,21 +32,9 @@ const DirectMessage = (props) => {
                 return response.json();
             })
             .then(data => {
-                console.log(data.data);
                 const dm = data.data; 
-
-                // const filteredMessages = dm.map(item => {
-                //     const tempDm = {}
-                //     tempDm[item.id] = {
-                //         sender: item.sender.email, 
-                //         receiver: item.receiver.email, 
-                //         body: item.body,
-                //         created_at: item.receiver.created_at
-                //     }
-                //     return tempDm;
-                // });
-
                 const filteredMessages = {};
+
                 for(const item of dm) {
                     filteredMessages[item.id] = {
                         sender: item.sender.email, 
@@ -61,34 +44,96 @@ const DirectMessage = (props) => {
                     }
                 }
 
-                console.log(filteredMessages);
-
                 setMessages({...filteredMessages});
             })
     }
 
     const chatMessages = Object.keys(messages).map(msg => {
-        return <ChannelMessage title={messages[msg].sender} 
+        return <ChannelMessage 
+            title={messages[msg].sender} 
             message={messages[msg].body} 
             created_at={messages[msg].created_at} />
     })
+
+    // Sending
+    const sendMessage = ({message, receiverId, headers}) => {
+
+        const options = {
+            method: 'POST', 
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json', 
+                'access-token' : headers.accessToken, 
+                'client' : headers.client, 
+                'expiry' : headers.expiry, 
+                'uid' : headers.uid
+            },
+            body: JSON.stringify({
+                receiver_id: receiverId, 
+                receiver_class: "User", 
+                body: message 
+            })
+        }
+
+        const url = `${process.env.REACT_APP_SLACK_ENDPOINT}/messages`;
+        
+        fetch(url, options) 
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if(!data.errors) {
+                    const dm = data.data;
+                    const filteredMessage = {};
+    
+                    filteredMessage[dm.id] = {
+                        sender: channelName,
+                        receiver: '', 
+                        body: dm.body, 
+                        created_at: dm.created_at 
+                    }
+    
+                    setMessages({...messages, ...filteredMessage});
+                } else {
+                    console.log("There is an error sending message.");
+                }
+            })
+    }
+
+    const typingChat = (e) => {
+        e.preventDefault();
+        setChatInput(e.target.value);
+    }
+
+    const handleEnter = (e) => {
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            console.log(chatInput);
+            const message = e.target.value;
+            // send message
+            sendMessage({message, receiverId, headers});
+
+            e.target.value = '';
+            setChatInput('');
+        }
+    }
+
     
     return (
         <section id="channel-chat">
             <div id="channel-header">
                 <div className="container header">
-                    <h1><img src="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" alt="" /> {channelName}</h1>
+                    <h1><img src="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" alt="" /> {receiverName}</h1>
                 </div>
             </div>
 
             <div id="channel-chat-content">
                 {chatMessages}
-                {/* <ChannelMessage title={title} message={message} /> */}
             </div>
 
             <div id="channel-chat-input">
                 <div className="container">
-                    <textarea name="" id="" placeholder="Message #announcement"></textarea>
+                    <textarea name="" id="" onChange={typingChat} onKeyPress={handleEnter} placeholder="Message #announcement">{chatInput}</textarea>
                 </div>
             </div>
         </section>
