@@ -95,6 +95,10 @@ const Sidebar = (props) => {
         setChatWindow('create-chat');
     }
 
+    useEffect(() => {
+        console.log(dmList);
+    }, [dmList])
+
     return (
         <section id="sidebar">
             <div id="side-header">
