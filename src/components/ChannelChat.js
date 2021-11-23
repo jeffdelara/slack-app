@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { getHeaders } from "./Utils";
 
 const ChannelChat = (props) => {
     const {channelId, channelName} = props; 
+    const headers = getHeaders();
 
     // channelId is the id
     console.log(channelId);
