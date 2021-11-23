@@ -1,8 +1,37 @@
 import React from "react";
+import { useEffect } from "react";
 import { getHeaders } from "./Utils";
 
 const ChannelChat = (props) => {
     const {channelId, channelName} = props; 
+    const headers = getHeaders();
+
+    useEffect(() => {
+        getChannelMessages(channelId, headers);
+    }, [channelId]);
+
+    const getChannelMessages = (channelId, headers) => {
+        const options = {
+            method: 'GET', 
+            mode: 'cors',
+            headers: {
+                'access-token' : headers.accessToken,  
+                'client' : headers.client, 
+                'expiry' : headers.expiry, 
+                'uid' : headers.uid
+            }
+        }
+
+        const url = `${process.env.REACT_APP_SLACK_ENDPOINT}/messages?receiver_id=${channelId}&receiver_class=Channel`;
+        fetch(url, options)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+               console.log(data);
+            })
+    }
+
 
     // channelId is the id
     console.log(channelId);

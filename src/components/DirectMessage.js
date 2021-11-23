@@ -19,7 +19,7 @@ const DirectMessage = (props) => {
             method: 'GET', 
             mode: 'cors',
             headers: {
-                'access-token' : headers.accessToken, 
+                'access-token' : headers.accessToken,  
                 'client' : headers.client, 
                 'expiry' : headers.expiry, 
                 'uid' : headers.uid
