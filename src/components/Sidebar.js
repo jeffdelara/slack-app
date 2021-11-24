@@ -102,6 +102,7 @@ const Sidebar = (props) => {
     const createMessage = (e) => {
         e.preventDefault();
         console.log("CREATE MESSAGE", e.target);
+        setChatWindow('compose-message');
     }
 
     return (
@@ -109,7 +110,9 @@ const Sidebar = (props) => {
             <div id="side-header">
                 <div className="container header">
                     <h1>Avion School</h1>
-                    <a href="#" onClick={createMessage}><i className='bx bx-message-square-edit' id="side-create-message"></i></a>
+                    <a href="#" onClick={createMessage}>
+                        <i className='bx bx-message-square-edit' id="side-create-message"></i>
+                    </a>
                 </div>
             </div>
 
