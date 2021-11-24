@@ -13,6 +13,7 @@ const DirectMessage = (props) => {
 
     useEffect(() => {
         getUserMessages(receiverId, headers);
+        
     }, [receiverId]);
 
     const getUserMessages = (receiverId, headers) => {
@@ -46,6 +47,7 @@ const DirectMessage = (props) => {
                 }
 
                 setMessages({...filteredMessages});
+                ref.current.scrollTo({top: ref.current.offsetTop + ref.current.offsetHeight});
             })
     }
 
