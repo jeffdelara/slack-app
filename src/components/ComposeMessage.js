@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import ChannelChatInput from "./ChannelChatInput";
 import { getHeaders } from "./Utils";
 
 const ComposeMessage = (props) => {
-    const {setChannelId, setChannelName} = props;
+    const {setChannelId, setChannelName, setChatWindow} = props;
     // array of users from api
     const [users, setUsers] = useState([]);
     
@@ -99,11 +100,16 @@ const ComposeMessage = (props) => {
                 </div>
             </div>
 
-            <div id="channel-chat-input">
+            {/* { user && <div id="channel-chat-input">
                 <div className="container">
-                    <textarea name="" id="" onChange={() => {}} onKeyPress={() => {}} placeholder="Message"></textarea>
+                    <textarea name="" id="" style={{ border: "1px solid #000" }} onChange={() => {}} onKeyPress={() => {}} placeholder="Message"></textarea>
                 </div>
-            </div>
+            </div>} */}
+            {user && <ChannelChatInput receiverId={user.id} 
+                receiverName={user.name} 
+                setChatWindow={setChatWindow} 
+                setChannelId={setChannelId} 
+                setChannelName={setChannelName} />}
         </section>
     )
 }

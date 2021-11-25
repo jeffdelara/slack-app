@@ -13,7 +13,6 @@ const DirectMessage = (props) => {
 
     useEffect(() => {
         getUserMessages(receiverId, headers);
-        
     }, [receiverId]);
 
     const getUserMessages = (receiverId, headers) => {

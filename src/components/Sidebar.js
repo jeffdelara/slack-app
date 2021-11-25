@@ -33,7 +33,6 @@ const Sidebar = (props) => {
                     // no errors
                     const channels = data.data;
                     setChanList([...channels]);
-                    console.log(dmList);
                 }
             })
     }
