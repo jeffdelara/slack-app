@@ -4,6 +4,7 @@ import ChannelChat from "./ChannelChat";
 import Thread from "./Thread";
 import ChannelCreate from "./ChannelCreate";
 import DirectMessage from "./DirectMessage";
+import ComposeMessage from "./ComposeMessage";
 
 const Slack = (props) => {
     const {setPage} = props;
@@ -29,8 +30,16 @@ const Slack = (props) => {
     }
 
     if(chatWindow === 'dm') {
-        // send the user id maybe?
+        // send the user id as channelId
         chat = <DirectMessage channelId={channelId} channelName={channelName} />
+    }
+
+    if(chatWindow === 'compose-message') {
+        // set channel id & name once the user has composed the message
+        chat = <ComposeMessage 
+            setChannelId={setChannelId} 
+            setChannelName={setChannelName} 
+            setChatWindow={setChatWindow} />
     }
 
     const thread = isThreadOpen && <Thread setIsThreadOpen={setIsThreadOpen} />
