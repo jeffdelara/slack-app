@@ -5,8 +5,10 @@ const ComposeMessage = (props) => {
     const {setChannelId, setChannelName} = props;
     // array of users from api
     const [users, setUsers] = useState([]);
-    // the result of searched user
-    const [user, setUser] = useState('');
+    
+    // picked user
+    const [user, setUser] = useState(false);
+    // the result of searched users
     const [searchTerm, setSearchTerm] = useState('');
     const [matchedTerms, setMatchedTerms] = useState([]);
     const headers = getHeaders();
@@ -72,6 +74,10 @@ const ComposeMessage = (props) => {
         
     }, [searchTerm])
 
+    const resetCompose = (e) => {
+        e.preventDefault();
+        setUser(false);
+    }
 
     return (
         <section id="channel-chat">
@@ -85,10 +91,17 @@ const ComposeMessage = (props) => {
             <div id="channel-chat-content">
                 <div className="container">
                     <div className="muted">Send message to:</div>
-                    <input type="text" onChange={typingUser} value={searchTerm} name="channelName" className="textbox" placeholder="Enter user id" autoComplete="off" />
-                    <br />
-                    <div className="muted mt">{ matchedTerms.length } users found.</div>
-                    <UserSearchResults matchedTerms={matchedTerms} />
+                    { user &&  <div className="user-to">{user.name} <a href="#" onClick={resetCompose}>x</a></div>}
+                    { !user && <input type="text" onChange={typingUser} value={searchTerm} name="channelName" className="textbox" placeholder="Enter user id" autoComplete="off" />}
+                    { !user && <div className="mt">
+                        <UserSearchResults matchedTerms={matchedTerms} setUser={setUser} />
+                    </div> }
+                </div>
+            </div>
+
+            <div id="channel-chat-input">
+                <div className="container">
+                    <textarea name="" id="" onChange={() => {}} onKeyPress={() => {}} placeholder="Message"></textarea>
                 </div>
             </div>
         </section>
@@ -98,11 +111,11 @@ const ComposeMessage = (props) => {
 
 
 const UserSearchResults = (props) => {
-    const {matchedTerms} = props; 
+    const {matchedTerms, setUser} = props; 
     const searchResults = matchedTerms;
 
     const results = searchResults.map(user => {
-        return <SearchItem name={user.email} id={user.id} />
+        return <SearchItem name={user.email} setUser={setUser} id={user.id} />
     });
 
     return (
@@ -113,12 +126,22 @@ const UserSearchResults = (props) => {
 }
 
 const SearchItem = (props) => {
-    const { id, name } = props;
+    const { id, name, setUser } = props;
+
+    const confirmReceiver = (e, id) => {
+        e.preventDefault();
+        console.log(id);
+        setUser({id, name});
+        // send receiver id
+        // put -> sample@gmail.com [x] replacing the search field
+        // show textarea for composing message
+    }
+
     return (
         <div className="channel-message" key={id}>
             <div className="sender-pic"><img src="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" alt="" /></div>
             <div className="sender">
-                <div className="sender-name"><a href="#">{name}</a></div>
+                <div className="sender-name"><a href="#" onClick={(e) => confirmReceiver(e, id)}>{name}</a></div>
                 <div className="muted">ID: {name}</div>
             </div>
         </div>
