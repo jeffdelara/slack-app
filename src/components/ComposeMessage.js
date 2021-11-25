@@ -100,11 +100,6 @@ const ComposeMessage = (props) => {
                 </div>
             </div>
 
-            {/* { user && <div id="channel-chat-input">
-                <div className="container">
-                    <textarea name="" id="" style={{ border: "1px solid #000" }} onChange={() => {}} onKeyPress={() => {}} placeholder="Message"></textarea>
-                </div>
-            </div>} */}
             {user && <ChannelChatInput receiverId={user.id} 
                 receiverName={user.name} 
                 setChatWindow={setChatWindow} 
@@ -138,9 +133,6 @@ const SearchItem = (props) => {
         e.preventDefault();
         console.log(id);
         setUser({id, name});
-        // send receiver id
-        // put -> sample@gmail.com [x] replacing the search field
-        // show textarea for composing message
     }
 
     return (
