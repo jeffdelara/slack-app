@@ -1,21 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const SideDirectMessages = (props) => {
     const {dmList, setdmList, setChatWindow, setChannelId, setChannelName} = props; 
-    const dmObjects = {}
-    
-    // cleanup
-    dmList.forEach( dm => {
-        dmObjects[dm.sender.uid] = dm;
-    });
-    
+
     // get unique keys as name
-    const sideDMList = Object.keys(dmObjects).map( dm => {
-        const element = dmObjects[dm];
+    let sideDMList = dmList.map( dm => {
+
         return <SideDMPerson 
-                receiverId={element.receiver.id} 
+                receiverId={dm.id} 
                 pic="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" 
-                name={element.sender.uid}
+                name={dm.name}
                 setChatWindow={setChatWindow}
                 setChannelId={setChannelId} 
                 setChannelName={setChannelName} />

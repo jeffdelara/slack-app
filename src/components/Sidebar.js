@@ -9,6 +9,9 @@ const Sidebar = (props) => {
     const {setChatWindow, setPage, chanList, setChanList, dmList, setdmList, setChannelId, setChannelName} = props;
 
     const [isLogout, setIsLogout] = useState(false);
+    const [memberIDs, setMemberIDs] = useState([]);
+    const [stateMemberMessage, setStateMemberMessage] = useState([]);
+    const headers = getHeaders();
 
     const getUserChannels = ({accessToken, client, expiry, uid}) => {
         const options = {
@@ -70,7 +73,7 @@ const Sidebar = (props) => {
         if(accessToken && client && expiry && uid) {
             // get user channels only when channel list is not yet loaded
             getUserChannels({accessToken, client, expiry, uid});
-            getUserMessages(user, {accessToken, client, expiry, uid});
+            // getUserMessages(user, {accessToken, client, expiry, uid});
         } else {
             // else go to login page
             setPage('login'); 
@@ -87,6 +90,121 @@ const Sidebar = (props) => {
         }
     }, [isLogout])
 
+    useEffect(() => {
+        getMemberList(chanList);
+    }, [chanList]);
+
+    useEffect(() => {
+        const uniqueMemberIDs = [...new Set(memberIDs) ];
+        getMembersMessage(uniqueMemberIDs);
+    }, [memberIDs]);
+
+    const getMembersMessage = async (userIds) => {
+
+        const membersMessages = [];
+
+        userIds.forEach( async userId => {
+            const options = {
+                method: 'GET', 
+                mode: 'cors',
+                headers: {
+                    'access-token' : headers.accessToken, 
+                    'client' : headers.client, 
+                    'expiry' : headers.expiry, 
+                    'uid' : headers.uid
+                }
+            }
+    
+            const url = `${process.env.REACT_APP_SLACK_ENDPOINT}/messages?receiver_id=${userId}&receiver_class=User`;
+
+            const response = await fetch(url, options);
+            const data = await response.json();
+
+            const messages = data.data;
+
+            const sender = messages[0].sender.uid;
+            const recvr = messages[0].receiver.uid;
+            let userName = '';
+            if(sender === recvr) { 
+                userName = headers.user.uid; 
+            } else if (sender === headers.user.uid) {
+                userName = recvr;
+            } else {
+                userName = sender;
+            }
+
+            const user = {
+                id: userId, 
+                name: userName,
+                messages: messages
+            }
+            
+            
+            membersMessages.push(user);
+            setStateMemberMessage([...membersMessages, user]);
+        });
+    }
+
+    useEffect(() => {
+
+        let filteredArray = [];
+
+        function isExists(member) {
+            for(const f of filteredArray) {
+                if(f.id === member.id) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
+        stateMemberMessage.forEach( member => {
+            if(!isExists(member)) {
+                filteredArray.push(member);
+            }
+        });
+        
+        setdmList(filteredArray);
+    }, [stateMemberMessage]);
+
+    const getMemberList = async (list) => {
+        let channelMembers = [];
+
+        list.forEach( async channel => {
+
+            const options = {
+                method: 'GET', 
+                mode: 'cors',
+                headers: {
+                    'access-token' : headers.accessToken, 
+                    'client' : headers.client, 
+                    'expiry' : headers.expiry, 
+                    'uid' : headers.uid
+                }
+            }
+
+            const url = `${process.env.REACT_APP_SLACK_ENDPOINT}/channels/${channel.id}`;
+
+            const response = await fetch(url, options);
+            const data = await response.json();
+
+            const channelDetails = data.data; 
+
+            channelDetails.channel_members.forEach(channelMember => {
+
+                if(!channelMembers.includes(channelMember.user_id)) {
+                    const userId = channelMember.user_id;
+                    // const value = getMemberMessage(userId);
+                    channelMembers.push(userId);
+                    setMemberIDs([...channelMembers, userId]);
+                }
+            })
+            
+        });
+
+    }
+
     // handler for creating a channel
     const createChannel = (e) => {
         e.preventDefault();
@@ -94,9 +212,6 @@ const Sidebar = (props) => {
         setChatWindow('create-chat');
     }
 
-    useEffect(() => {
-        console.log(dmList);
-    }, [dmList])
 
     const createMessage = (e) => {
         e.preventDefault();

@@ -89,7 +89,7 @@ const DirectMessage = (props) => {
                     const filteredMessage = {};
     
                     filteredMessage[dm.id] = {
-                        sender: channelName,
+                        sender: headers.user.uid,
                         receiver: '', 
                         body: dm.body, 
                         created_at: dm.created_at 
