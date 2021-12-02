@@ -443,3 +443,17 @@ a:hover {
     margin-top: .5rem;
     background-color: #EEE;
 }
+
+
+.btn {
+    background-color: var(--main-color-light);
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin-top: .5rem;
+    color: white;
+}
+
+.btn:hover {
+    background-color: var(--main-color-hover);
+    color: white;
+}

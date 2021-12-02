@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-import ChannelChatInput from "./ChannelChatInput";
+import React, {useState, useEffect} from "react";
 import { getHeaders } from "./Utils";
 import UserSearchResults from "./UserSearchResults";
+import FormNotif from "./FormNotif";
 
-const ComposeMessage = (props) => {
-    const {setChannelId, setChannelName, setChatWindow} = props;
+const AddMemberWindow = (props) => {
+    const {channelId, setChatWindow, channelName} = props;
     // array of users from api
     const [users, setUsers] = useState([]);
-    
     // picked user
     const [user, setUser] = useState(false);
-    // the result of searched users
     const [searchTerm, setSearchTerm] = useState('');
     const [matchedTerms, setMatchedTerms] = useState([]);
-    const headers = getHeaders();
+    const [error, setError] = useState(false);
 
+    const headers = getHeaders();
+    // get all users
     useEffect(() => {
         // Get all users
         getAllUsers();
@@ -81,34 +81,71 @@ const ComposeMessage = (props) => {
         setUser(false);
     }
 
+    const confirmAdd = (e) => {
+        e.preventDefault();
+        console.log("ADD", user);
+        // add user
+        addMember(user.id);
+    }
+
+    const addMember = async (id) => {
+        const url = `${process.env.REACT_APP_SLACK_ENDPOINT}/channel/add_member`;
+        const payload = { id: channelId, member_id: id };
+        const options = {
+            method: 'POST', 
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json', 
+                'access-token' : headers.accessToken, 
+                'client' : headers.client, 
+                'expiry' : headers.expiry, 
+                'uid' : headers.uid
+            }, 
+            body: JSON.stringify(payload)
+        }
+        const response = await fetch(url, options);
+        const data = await response.json();
+        console.log(data);
+        if(!data.errors) {
+            // success
+            setError({message: "User added to channel.", mtype: 'success'});
+        } else {
+            console.log(data.errors);
+            const errorMessages = data.errors.join(" ");
+            setError({message: errorMessages, mtype: 'danger'});
+        }
+    }
+
+    useEffect(() => {
+        if(!user) {
+            setError(false);
+        }
+    }, [user]);
+
     return (
         <section id="channel-chat">
             <div id="channel-header">
                 <div className="container header">
-                    <h1><i className='bx bx-message-square-edit'></i> Compose message</h1>
-
+                    <h1><i className='bx bx-message-square-edit'></i> Add member</h1>
                 </div>
             </div>
 
             <div id="channel-chat-content">
                 <div className="container">
-                    <div className="muted">Send message to:</div>
-                    { user &&  <div className="user-to">{user.name} <a href="#" onClick={resetCompose}>x</a></div>}
+                <div className="muted">Select a user to add to channel <strong>@{channelName}</strong></div>
+                <div>{error && <FormNotif messageType={error.mtype} message={error.message} />}</div>
+                { user &&  <div className="user-to">{user.name} <a href="#" onClick={resetCompose}>x</a></div>}
                     { !user && <input type="text" onChange={typingUser} value={searchTerm} name="channelName" className="textbox" placeholder="Search user..." autoComplete="off" />}
                     { !user && <div className="mt">
                         <UserSearchResults matchedTerms={matchedTerms} setUser={setUser} />
+                        
                     </div> }
+
+                {user && <div><a href="#" className="btn" onClick={confirmAdd}>Confirm add</a></div>}
                 </div>
             </div>
-
-            {user && <ChannelChatInput receiverId={user.id} 
-                receiverName={user.name} 
-                setChatWindow={setChatWindow} 
-                setChannelId={setChannelId} 
-                setChannelName={setChannelName} />}
         </section>
     )
 }
 
-
-export default ComposeMessage;
+export default AddMemberWindow;
