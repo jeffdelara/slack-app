@@ -36,6 +36,8 @@ const Sidebar = (props) => {
                     // no errors
                     const channels = data.data;
                     setChanList([...channels]);
+                    setChannelId(channels[0].id);
+                    setChannelName(channels[0].name);
                 }
             })
     }

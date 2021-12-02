@@ -9,10 +9,10 @@ const ChannelMessages = (props) => {
         outChannelMessages = channelMessages.map( message => {
             return (
                 <ChannelMessage 
-                        userName="Jeff de Lara" 
-                        userMessage="Hi!" 
-                        chatDate="8:01 PM" 
-                        userPicture="https://ca.slack-edge.com/T010DU0GZE0-U02C42FABUK-8daed97695af-512" />
+                        userName={message.sender.uid}
+                        userMessage={message.body}
+                        chatDate={message.created_at} 
+                        userPicture="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" />
             )
         })
     }
