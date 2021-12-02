@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { getHeaders } from "./Utils";
 
 const DirectMessage = (props) => {
@@ -9,6 +9,7 @@ const DirectMessage = (props) => {
     const [messages, setMessages] = useState({});
     const [chatInput, setChatInput] = useState('');
     const headers = getHeaders();
+    const ref = useRef();
 
     useEffect(() => {
         getUserMessages(receiverId, headers);
@@ -45,6 +46,7 @@ const DirectMessage = (props) => {
                 }
 
                 setMessages({...filteredMessages});
+                ref.current.scrollTo({top: ref.current.offsetTop + ref.current.offsetHeight});
             })
     }
 
@@ -87,13 +89,16 @@ const DirectMessage = (props) => {
                     const filteredMessage = {};
     
                     filteredMessage[dm.id] = {
-                        sender: channelName,
+                        sender: headers.user.uid,
                         receiver: '', 
                         body: dm.body, 
                         created_at: dm.created_at 
                     }
     
                     setMessages({...messages, ...filteredMessage});
+                    
+                    // Scroll to bottom
+                    ref.current.scrollTo({top: ref.current.offsetTop + ref.current.offsetHeight});
                 } else {
                     console.log("There is an error sending message.");
                 }
@@ -127,7 +132,7 @@ const DirectMessage = (props) => {
                 </div>
             </div>
 
-            <div id="channel-chat-content">
+            <div ref={ref} id="channel-chat-content">
                 {chatMessages}
             </div>
 

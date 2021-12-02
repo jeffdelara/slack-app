@@ -1,9 +1,8 @@
-import React from 'react';
-import './App.css';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Slack from './components/Slack';
+import './App.css';
 
 function App() {
   const [page, setPage] = useState('login');  
