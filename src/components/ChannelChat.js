@@ -1,9 +1,12 @@
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getHeaders } from "./Utils";
+import Modal from "./Modal/Modal";
 
 const ChannelChat = (props) => {
     const {channelId, channelName} = props; 
+    const [messages, setMessages] = useState({});
+    const [chatInput, setChatInput] = useState('');
     const headers = getHeaders();
 
     useEffect(() => {
@@ -28,15 +31,50 @@ const ChannelChat = (props) => {
                 return response.json();
             })
             .then(data => {
-               console.log(data);
+                console.log(data)
             })
+    } 
+
+    const [show, setShow] = useState(false);
+
+    
+    const sendMessage = ({message, channelId, headers}) => {
+
+        const chatChannel = {
+            method: 'POST', 
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json', 
+                'access-token' : headers.accessToken, 
+                'client' : headers.client, 
+                'expiry' : headers.expiry, 
+                'uid' : headers.uid
+            },
+            body: JSON.stringify({
+                channel_id: channelId, 
+                body: message 
+            })
+        }
     }
 
+    const typingChat = (e) => {
+        e.preventDefault();
+        setChatInput(e.target.value);
+    }
 
-    // channelId is the id
-    console.log(channelId);
-    // channelName is the name of the channel
-    console.log(channelName);
+    const handleEnter = (e) => {
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            console.log(chatInput);
+            const message = e.target.value;
+            // send message
+            sendMessage({message, channelId, headers});
+
+            e.target.value = '';
+            setChatInput('');
+        }
+    }
+
 
     // HINT:
     // Retrieve all messages using Slack API
@@ -52,15 +90,17 @@ const ChannelChat = (props) => {
         <section id="channel-chat">
             <div id="channel-header">
                 <div className="container header">
-                    <h1><i className='bx bx-hash'></i> Announcement</h1>
+                    <h1><i className='bx bx-hash'></i>{channelName}</h1>
                     <div className="channel-options">
-                        <a href="#" className="channel-btn">+ Add member</a> 
+                        <a href="#" className="channel-btn" >+ Add member</a> 
 
                         <div id="channel-members">
+                        <button onClick={() => setShow(true) }>
                             <img src="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" alt="" />
                             <img src="https://ca.slack-edge.com/T010DU0GZE0-U02C42FABUK-8daed97695af-512" alt="" />
                             <img src="https://ca.slack-edge.com/T010DU0GZE0-U01CNLJ3J0P-46af7649e68b-512" alt="" />
-                            <span className="muted">17</span>
+                        </button>
+                            <span className="muted"><Modal onClose={() => setShow(false)} show={show} /></span>
                         </div>
                     </div>
                 </div>
@@ -71,7 +111,7 @@ const ChannelChat = (props) => {
                     <div className="sender-pic"><img src="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" alt="" /></div>
                     <div className="sender">
                         <div className="sender-name">Team Standup B13 <span className="created">8:01 PM</span></div>
-                        <div className="sender-message">Good evening! Don't forget to post your standup.</div>
+                        <div className="sender-message">NO TEXT</div>
                         
                     </div>
                 </div>
@@ -98,7 +138,7 @@ const ChannelChat = (props) => {
                     <div className="sender-pic"><img src="https://ca.slack-edge.com/T010DU0GZE0-U02C42FABUK-8daed97695af-512" alt="" /></div>
                     <div className="sender">
                         <div className="sender-name">Jeff de Lara <span className="created">8:01 PM</span></div>
-                        <div className="sender-message">Good evening! Don't forget to post your standup.</div>
+                        <div className="sender-message">NO TEXT</div>
 
                     </div>
                 </div>
@@ -106,11 +146,13 @@ const ChannelChat = (props) => {
 
             <div id="channel-chat-input">
                 <div className="container">
-                    <textarea name="" id="" placeholder="Message #announcement"></textarea>
+                    <textarea name="" id=""onChange={typingChat} onKeyPress={handleEnter} placeholder="Message #announcement">{chatInput}</textarea>
                 </div>
             </div>
         </section>
     )
 }
+
+
 
 export default ChannelChat;
