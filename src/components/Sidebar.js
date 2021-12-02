@@ -61,7 +61,7 @@ const Sidebar = (props) => {
                 console.log(data);
                 const dms = data.data;
 
-                setdmList([...dms]);
+                // setdmList([...dms]);
             })
     }
 

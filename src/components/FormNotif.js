@@ -1,3 +1,5 @@
+import React from 'react';
+
 const FormNotif = (props) => {
     // danger or success
     const { messageType, message } = props;
