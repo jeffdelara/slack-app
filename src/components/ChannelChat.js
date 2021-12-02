@@ -1,20 +1,30 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getHeaders } from "./Utils";
 import Modal from "./Modal/Modal";
 import ChannelMessages from "./ChannelMessages";
 import { computeHeadingLevel } from "@testing-library/dom";
 
 const ChannelChat = (props) => {
-    const {channelId, channelName} = props; 
+    const {channelId, channelName, setChatWindow, counter, setCounter} = props; 
     const [messages, setMessages] = useState({});
     const [chatInput, setChatInput] = useState('');
     const [channelMessages, setChannelMessages] = useState([]);
+    const ref = useRef();
     const headers = getHeaders();
 
     useEffect(() => {
         getChannelMessages(channelId, headers);
-    }, [channelId]);
+        console.log(counter);
+        const timer = setTimeout(() => {
+            setCounter(counter + 1);
+            getChannelMessages(channelId, headers);
+        }, 2000);
+
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [channelId, counter]);
 
     const getChannelMessages = (channelId, headers) => {
         const options = {
@@ -34,14 +44,13 @@ const ChannelChat = (props) => {
                 return response.json();
             })
             .then(data => {
-                console.log(data)
                 const messages = data.data;
-                setChannelMessages(messages);
+                setChannelMessages(() => messages);
+                ref.current.scrollIntoView({ behavior: "smooth" });
             })
     } 
 
     const [show, setShow] = useState(false);
-
     
     const sendMessage = ({message, channelId, headers}) => {
 
@@ -94,11 +103,12 @@ const ChannelChat = (props) => {
             setChatInput('');
         }
     }
-
-    useEffect(() => {
-        console.log("Loaded", channelMessages);
-    }, [channelMessages]);
     
+    const addMember = (e) => {
+        console.log('Add member');
+        e.preventDefault();
+        setChatWindow('add-member');
+    }
 
     return (
         <section id="channel-chat">
@@ -106,7 +116,7 @@ const ChannelChat = (props) => {
                 <div className="container header">
                     <h1><i className='bx bx-hash'></i>{channelName}</h1>
                     <div className="channel-options">
-                        <a href="#" className="channel-btn" >+ Add member</a> 
+                        <a href="#" className="channel-btn" onClick={addMember}>+ Add member</a> 
 
                         <div id="channel-members">
                         <button onClick={() => setShow(true) }>
@@ -124,7 +134,7 @@ const ChannelChat = (props) => {
 
                 <ChannelMessages channelMessages={channelMessages} />
 
-
+                <div ref={ref}></div>
             </div>
 
             <div id="channel-chat-input">

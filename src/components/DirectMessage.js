@@ -3,7 +3,7 @@ import { getHeaders } from "./Utils";
 
 const DirectMessage = (props) => {
     // channelId is also the receiver_id to be used for fetching API
-    const {channelId, channelName} = props;
+    const {channelId, channelName, counter, setCounter} = props;
     const receiverId = channelId;
     const receiverName = channelName;
     const [messages, setMessages] = useState({});
@@ -13,7 +13,16 @@ const DirectMessage = (props) => {
 
     useEffect(() => {
         getUserMessages(receiverId, headers);
-    }, [receiverId]);
+        console.log(counter);
+        const timer = setTimeout(() => {
+            setCounter(counter + 1);
+            getUserMessages(receiverId, headers);
+        }, 3000);
+
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [receiverId, counter]);
 
     const getUserMessages = (receiverId, headers) => {
         const options = {
@@ -46,7 +55,8 @@ const DirectMessage = (props) => {
                 }
 
                 setMessages({...filteredMessages});
-                ref.current.scrollTo({top: ref.current.offsetTop + ref.current.offsetHeight});
+                // ref.current.scrollTo({top: ref.current.offsetTop + ref.current.offsetHeight});
+                ref.current.scrollIntoView({ behavior: "smooth" });
             })
     }
 
@@ -98,7 +108,8 @@ const DirectMessage = (props) => {
                     setMessages({...messages, ...filteredMessage});
                     
                     // Scroll to bottom
-                    ref.current.scrollTo({top: ref.current.offsetTop + ref.current.offsetHeight});
+                    // ref.current.scrollTo({top: ref.current.offsetTop + ref.current.offsetHeight});
+                    ref.current.scrollIntoView({ behavior: "smooth" });
                 } else {
                     console.log("There is an error sending message.");
                 }
@@ -132,8 +143,9 @@ const DirectMessage = (props) => {
                 </div>
             </div>
 
-            <div ref={ref} id="channel-chat-content">
+            <div id="channel-chat-content">
                 {chatMessages}
+                <div ref={ref}></div>
             </div>
 
             <div id="channel-chat-input">

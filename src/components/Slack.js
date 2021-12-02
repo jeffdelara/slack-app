@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import ChannelChat from "./ChannelChat";
 import Thread from "./Thread";
 import ChannelCreate from "./ChannelCreate";
 import DirectMessage from "./DirectMessage";
 import ComposeMessage from "./ComposeMessage";
+import AddMemberWindow from "./AddMemberWindow";
 
 const Slack = (props) => {
     const {setPage} = props;
@@ -12,6 +13,7 @@ const Slack = (props) => {
     const [chatWindow, setChatWindow] = useState('chat'); // chat, create-chat, dm
     const [channelId, setChannelId] = useState(0);
     const [channelName, setChannelName] = useState('');
+    
 
     // sidebar states
     // contains array of channels that i joined
@@ -19,10 +21,18 @@ const Slack = (props) => {
     // contains array of users who dm with me
     const [dmList, setdmList] = useState([]);
 
+    const [counter, setCounter] = useState(0);
+
     let chat = <ChannelChat setIsThreadOpen={setIsThreadOpen} />
 
     if(chatWindow === 'chat') {
-        chat = <ChannelChat setIsThreadOpen={setIsThreadOpen} channelId={channelId} channelName={channelName} />
+        chat = <ChannelChat 
+            setIsThreadOpen={setIsThreadOpen} 
+            setChatWindow={setChatWindow} 
+            channelId={channelId} 
+            counter={counter} 
+            setCounter={setCounter}
+            channelName={channelName} />
     }
 
     if(chatWindow === 'create-chat') {
@@ -31,7 +41,7 @@ const Slack = (props) => {
 
     if(chatWindow === 'dm') {
         // send the user id as channelId
-        chat = <DirectMessage channelId={channelId} channelName={channelName} />
+        chat = <DirectMessage channelId={channelId} counter={counter} setCounter={setCounter} channelName={channelName} />
     }
 
     if(chatWindow === 'compose-message') {
@@ -40,6 +50,10 @@ const Slack = (props) => {
             setChannelId={setChannelId} 
             setChannelName={setChannelName} 
             setChatWindow={setChatWindow} />
+    }
+
+    if(chatWindow === 'add-member') {
+        chat = <AddMemberWindow channelId={channelId} channelName={channelName} setChatWindow={setChatWindow} />
     }
 
     const thread = isThreadOpen && <Thread setIsThreadOpen={setIsThreadOpen} />
