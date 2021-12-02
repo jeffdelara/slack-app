@@ -2,11 +2,14 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { getHeaders } from "./Utils";
 import Modal from "./Modal/Modal";
+import ChannelMessages from "./ChannelMessages";
+import { computeHeadingLevel } from "@testing-library/dom";
 
 const ChannelChat = (props) => {
     const {channelId, channelName} = props; 
     const [messages, setMessages] = useState({});
     const [chatInput, setChatInput] = useState('');
+    const [channelMessages, setChannelMessages] = useState([]);
     const headers = getHeaders();
 
     useEffect(() => {
@@ -32,6 +35,8 @@ const ChannelChat = (props) => {
             })
             .then(data => {
                 console.log(data)
+                const messages = data.data;
+                setChannelMessages(messages);
             })
     } 
 
@@ -40,7 +45,7 @@ const ChannelChat = (props) => {
     
     const sendMessage = ({message, channelId, headers}) => {
 
-        const chatChannel = {
+        const options = {
             method: 'POST', 
             mode: 'cors',
             headers: {
@@ -51,10 +56,25 @@ const ChannelChat = (props) => {
                 'uid' : headers.uid
             },
             body: JSON.stringify({
-                channel_id: channelId, 
+                receiver_id: channelId, 
+                receiver_class: "Channel",
                 body: message 
             })
         }
+
+        // Send message
+        const url = `${process.env.REACT_APP_SLACK_ENDPOINT}/messages`;
+
+        fetch(url, options) 
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                console.log(data);
+                if(!data.errors) {
+                    getChannelMessages(channelId, headers);
+                }
+            });
     }
 
     const typingChat = (e) => {
@@ -75,16 +95,10 @@ const ChannelChat = (props) => {
         }
     }
 
-
-    // HINT:
-    // Retrieve all messages using Slack API
-    // Referece: https://slack-avion.netlify.app/
-    // HTTP Method: Get
-    // URL: {process.env.REACT_APP_SLACK_ENDPOINT}/messages?receiver_id=${receiverId}&receiver_class=Channel
-    // Where receiver_id is the channelId declared above
-    // use getHeaders() to get the headers needed for the fetch request
-    // Display the data on the channel window
-
+    useEffect(() => {
+        console.log("Loaded", channelMessages);
+    }, [channelMessages]);
+    
 
     return (
         <section id="channel-chat">
@@ -107,41 +121,10 @@ const ChannelChat = (props) => {
             </div>
 
             <div id="channel-chat-content">
-                <div className="channel-message">
-                    <div className="sender-pic"><img src="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" alt="" /></div>
-                    <div className="sender">
-                        <div className="sender-name">Team Standup B13 <span className="created">8:01 PM</span></div>
-                        <div className="sender-message">NO TEXT</div>
-                        
-                    </div>
-                </div>
 
-                <div className="channel-message">
-                    <div className="sender-pic"><img src="https://ca.slack-edge.com/T010DU0GZE0-U01CNLJ3J0P-46af7649e68b-512" alt="" /></div>
-                    <div className="sender">
-                        <div className="sender-name">Maurus Vitor <span className="created">8:01 PM</span></div>
-                        <div className="sender-message">Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat, enim quis! Dolorum ut neque aliquam atque. Dolores dolorem, similique consectetur necessitatibus ut libero quis ipsam alias. Voluptate error ipsam perferendis.</div>
-                        <div className="message-replies">
-                            <img src="https://ca.slack-edge.com/T010DU0GZE0-U01CNLJ3J0P-46af7649e68b-512" alt="" />
-                            <img src="https://ca.slack-edge.com/T010DU0GZE0-U02C42FABUK-8daed97695af-512" alt="" />
-                            <span><a href="">2 replies</a></span>
-                            <span className="muted date">Last reply 2 days ago.</span>
-                        </div>
-                    </div>
-                </div>
+                <ChannelMessages channelMessages={channelMessages} />
 
-                <div className="date-divider">
-                    <span className="divider-content">Tuesday, November 9th</span>
-                </div>
 
-                <div className="channel-message">
-                    <div className="sender-pic"><img src="https://ca.slack-edge.com/T010DU0GZE0-U02C42FABUK-8daed97695af-512" alt="" /></div>
-                    <div className="sender">
-                        <div className="sender-name">Jeff de Lara <span className="created">8:01 PM</span></div>
-                        <div className="sender-message">NO TEXT</div>
-
-                    </div>
-                </div>
             </div>
 
             <div id="channel-chat-input">
@@ -152,7 +135,5 @@ const ChannelChat = (props) => {
         </section>
     )
 }
-
-
 
 export default ChannelChat;
