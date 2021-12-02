@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { getHeaders } from "./Utils";
 import Modal from "./Modal/Modal";
-import ChannelMessage from "./ChannelMessage";
+import ChannelMessages from "./ChannelMessages";
 import { computeHeadingLevel } from "@testing-library/dom";
 
 const ChannelChat = (props) => {
@@ -60,6 +60,8 @@ const ChannelChat = (props) => {
                 body: message 
             })
         }
+
+
     }
 
     const typingChat = (e) => {
@@ -152,26 +154,3 @@ const ChannelChat = (props) => {
 }
 
 export default ChannelChat;
-
-const ChannelMessages = (props) => {
-    const {channelMessages} = props;
-
-    let outChannelMessages = false;
-    if(channelMessages) {
-        outChannelMessages = channelMessages.map( message => {
-            return (
-                <ChannelMessage 
-                        userName="Jeff de Lara" 
-                        userMessage="Hi!" 
-                        chatDate="8:01 PM" 
-                        userPicture="https://ca.slack-edge.com/T010DU0GZE0-U02C42FABUK-8daed97695af-512" />
-            )
-        })
-    }
-
-    return (
-        <>
-        {channelMessages && outChannelMessages}
-        </>
-    )
-}
