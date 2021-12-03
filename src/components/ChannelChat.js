@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getHeaders } from "./Utils";
 import Modal from "./Modal/Modal";
 
+
 const ChannelChat = (props) => {
     const {channelId, channelName} = props; 
     const [messages, setMessages] = useState({});
@@ -84,15 +85,16 @@ const ChannelChat = (props) => {
     // Where receiver_id is the channelId declared above
     // use getHeaders() to get the headers needed for the fetch request
     // Display the data on the channel window
-
-
+ 
     return (
         <section id="channel-chat">
             <div id="channel-header">
                 <div className="container header">
                     <h1><i className='bx bx-hash'></i>{channelName}</h1>
                     <div className="channel-options">
-                        <a href="#" className="channel-btn" >+ Add member</a> 
+                        <a href="#" className="channel-btn" >+ Add member</a>
+                        
+        
 
                         <div id="channel-members">
                         <button onClick={() => setShow(true) }>
