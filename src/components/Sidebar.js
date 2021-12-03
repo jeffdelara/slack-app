@@ -36,6 +36,8 @@ const Sidebar = (props) => {
                     // no errors
                     const channels = data.data;
                     setChanList([...channels]);
+                    setChannelId(channels[0].id);
+                    setChannelName(channels[0].name);
                 }
             })
     }
@@ -121,27 +123,30 @@ const Sidebar = (props) => {
             const data = await response.json();
 
             const messages = data.data;
+            console.log(messages);
+            if(messages.length > 0) {
+                const sender = messages[0].sender.uid;
+                const recvr = messages[0].receiver.uid;
+                let userName = '';
+                if(sender === recvr) { 
+                    userName = headers.user.uid; 
+                } else if (sender === headers.user.uid) {
+                    userName = recvr;
+                } else {
+                    userName = sender;
+                }
 
-            const sender = messages[0].sender.uid;
-            const recvr = messages[0].receiver.uid;
-            let userName = '';
-            if(sender === recvr) { 
-                userName = headers.user.uid; 
-            } else if (sender === headers.user.uid) {
-                userName = recvr;
-            } else {
-                userName = sender;
-            }
-
-            const user = {
-                id: userId, 
-                name: userName,
-                messages: messages
+                const user = {
+                    id: userId, 
+                    name: userName,
+                    messages: messages
+                }
+                
+                
+                membersMessages.push(user);
+                setStateMemberMessage([...membersMessages, user]);
             }
             
-            
-            membersMessages.push(user);
-            setStateMemberMessage([...membersMessages, user]);
         });
     }
 
