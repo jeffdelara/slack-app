@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b178f8be7a23289e8e3862cad41b2e33",
+    "revision": "3dee291fa81a37fa401ef47afb3cd8db",
     "url": "/slack-app/index.html"
   },
   {
