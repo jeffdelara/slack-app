@@ -9,7 +9,7 @@ import AddMemberWindow from "./AddMemberWindow";
 
 const Slack = (props) => {
     const {setPage} = props;
-    const [isThreadOpen, setIsThreadOpen] = useState(true);
+    const [isThreadOpen, setIsThreadOpen] = useState(false);
     const [chatWindow, setChatWindow] = useState('chat'); // chat, create-chat, dm
     const [channelId, setChannelId] = useState(0);
     const [channelName, setChannelName] = useState('');
