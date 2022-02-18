@@ -5,6 +5,7 @@ import Modal from "./Modal/Modal";
 import ChannelMessages from "./ChannelMessages";
 import { computeHeadingLevel } from "@testing-library/dom";
 
+
 const ChannelChat = (props) => {
     const {channelId, channelName, setChatWindow, counter, setCounter} = props; 
     const [messages, setMessages] = useState({});
@@ -110,6 +111,7 @@ const ChannelChat = (props) => {
         setChatWindow('add-member');
     }
 
+
     return (
         <section id="channel-chat">
             <div id="channel-header">
@@ -117,7 +119,6 @@ const ChannelChat = (props) => {
                     <h1><i className='bx bx-hash'></i>{channelName}</h1>
                     <div className="channel-options">
                         <a href="#" className="channel-btn" onClick={addMember}>+ Add member</a> 
-
                         <div id="channel-members">
                         <button onClick={() => setShow(true) }>
                             <img src="https://a.slack-edge.com/d4111/img/apps/workflows_192.png" alt="" />
